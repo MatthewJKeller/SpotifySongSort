@@ -11,13 +11,12 @@
         <h1>Song Search</h1>
     </header>
     <main>
-        
         <div id="search">
             Search within:
-            <select>
-                <option value = "Title">Title</option>
-                <option value = "Artist">Artist</option>
-                <option value = "option1">Genre</option>        
+            <select id="searchSelect">
+                <option value="Title">Title</option>
+                <option value="Artist">Artist</option>
+                <option value="Genre">Genre</option>        
             </select>
             Sort By:
             <input type="text" id="sortInput" placeholder="Sort by...">
@@ -31,7 +30,32 @@
         </div>
     </main>
     <script>
+        document.getElementById('searchButton').addEventListener('click', async () => {
+            const select = document.getElementById('searchSelect').value;
+            const sortInput = document.getElementById('sortInput').value;
+            const explicit = document.getElementById('explicit').checked;
+            const searchInput = document.getElementById('searchInput').value;
 
+            try {
+                const prom = await fetch("/search", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        select: select,
+                        sortInput: sortInput,
+                        explicit: explicit,
+                        searchInput: searchInput
+                    }),
+                });
+
+                const response = await prom.json();
+                document.getElementById('results').textContent = JSON.stringify(response, null, 2);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        });
     </script>
 </body>
 </html>
